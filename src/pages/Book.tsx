@@ -208,7 +208,7 @@ export default function Book() {
             ))}
           </div>
 
-          <div id="recaptcha-container" />
+          
 
           <AnimatePresence mode="wait">
             {step === 0 && (
