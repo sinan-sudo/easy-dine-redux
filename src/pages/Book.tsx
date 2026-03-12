@@ -107,7 +107,6 @@ export default function Book() {
     if (otpStatus !== "idle") {
       setOtpStatus("idle");
       setOtp("");
-      setConfirmationResult(null);
     }
   }, [mobileNumber]);
 
@@ -116,42 +115,6 @@ export default function Book() {
     const item = menuItems.find(i => i.id === id);
     return sum + (item ? item.price * qty : 0);
   }, 0);
-
-  const handleSendOTP = async () => {
-    if (mobileNumber.length !== 10) return;
-    setOtpStatus("sending");
-    try {
-      if (!recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current = createRecaptchaVerifier("recaptcha-container");
-      }
-      const result = await sendPhoneOTP(`+91${mobileNumber}`, recaptchaVerifierRef.current);
-      setConfirmationResult(result);
-      setOtpStatus("sent");
-      toast({ title: "OTP Sent", description: `Verification code sent to +91${mobileNumber}` });
-    } catch (error: any) {
-      console.error("OTP send error:", error);
-      setOtpStatus("failed");
-      if (recaptchaVerifierRef.current) {
-        try { recaptchaVerifierRef.current.clear(); } catch (_) {}
-        recaptchaVerifierRef.current = null;
-      }
-      toast({ title: "Failed to send OTP", description: error.message, variant: "destructive" });
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (!confirmationResult || otp.length !== 6) return;
-    setOtpStatus("verifying");
-    try {
-      await verifyOTP(confirmationResult, otp);
-      setOtpStatus("verified");
-      toast({ title: "Phone Verified!", description: "Your mobile number has been verified successfully." });
-    } catch (error: any) {
-      console.error("OTP verify error:", error);
-      setOtpStatus("failed");
-      toast({ title: "Verification Failed", description: "Invalid OTP. Please try again.", variant: "destructive" });
-    }
-  };
 
   const handleSubmit = async () => {
     if (!user || !date || !timeSlot || !selectedTable) return;
