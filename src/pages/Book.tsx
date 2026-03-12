@@ -386,7 +386,7 @@ export default function Book() {
                             }}
                             maxLength={10}
                             className="bg-muted/50 rounded-l-none"
-                            disabled={otpStatus === "verified"}
+                            disabled={false}
                           />
                         </div>
                         {mobileNumber.length === 10 && (
