@@ -8,8 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { UtensilsCrossed, Mail, Lock, User, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { signInWithGoogle } from "@/lib/firebaseAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -48,37 +47,14 @@ export default function Auth() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      const firebaseUser = await signInWithGoogle();
-      const googleEmail = firebaseUser.email!;
-      const googleName = firebaseUser.displayName || "";
-      const googleAvatar = firebaseUser.photoURL || "";
-
-      const { error: signInError } = await signIn(googleEmail, `firebase_${firebaseUser.uid}`);
-
-      if (signInError) {
-        const { error: signUpError } = await signUp(googleEmail, `firebase_${firebaseUser.uid}`, googleName);
-        if (signUpError) {
-          toast({ title: "Google sign-in failed", description: signUpError.message, variant: "destructive" });
-          setGoogleLoading(false);
-          return;
-        }
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast({ title: "Google sign-in failed", description: String(result.error), variant: "destructive" });
       }
-
-      if (googleAvatar) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          await supabase.from("profiles").update({
-            avatar_url: googleAvatar,
-            full_name: googleName,
-          }).eq("id", session.user.id);
-        }
-      }
-
-      toast({ title: "Welcome!", description: `Signed in as ${googleEmail}` });
     } catch (error: any) {
-      if (error.code !== "auth/popup-closed-by-user") {
-        toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
-      }
+      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
     }
     setGoogleLoading(false);
   };

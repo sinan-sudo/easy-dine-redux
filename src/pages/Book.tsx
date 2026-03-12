@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,17 +12,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Plus, Minus, Check, ArrowRight, ArrowLeft, Loader2, ShieldCheck } from "lucide-react";
+import { CalendarIcon, Plus, Minus, Check, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import FloorMap from "@/components/FloorMap";
 import Navbar from "@/components/Navbar";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { createRecaptchaVerifier } from "@/lib/firebase";
-import { sendPhoneOTP, verifyOTP } from "@/lib/firebaseAuth";
-import { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
+
 
 type RestaurantTable = Tables<"restaurant_tables">;
 type MenuItem = Tables<"menu_items">;
@@ -39,7 +36,7 @@ const OCCASIONS = [
   { value: "business" as const, label: "💼 Business" },
 ];
 
-type OtpStatus = "idle" | "sending" | "sent" | "verifying" | "verified" | "failed";
+
 
 export default function Book() {
   const { user, loading: authLoading } = useAuth();
@@ -61,10 +58,6 @@ export default function Book() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const [otpStatus, setOtpStatus] = useState<OtpStatus>("idle");
-  const [otp, setOtp] = useState("");
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -108,13 +101,6 @@ export default function Book() {
     return () => { supabase.removeChannel(channel); };
   }, [date, timeSlot]);
 
-  useEffect(() => {
-    if (otpStatus !== "idle") {
-      setOtpStatus("idle");
-      setOtp("");
-      setConfirmationResult(null);
-    }
-  }, [mobileNumber]);
 
   const categories = [...new Set(menuItems.map(i => i.category))];
   const preOrderTotal = Object.entries(preOrder).reduce((sum, [id, qty]) => {
@@ -122,46 +108,10 @@ export default function Book() {
     return sum + (item ? item.price * qty : 0);
   }, 0);
 
-  const handleSendOTP = async () => {
-    if (mobileNumber.length !== 10) return;
-    setOtpStatus("sending");
-    try {
-      if (!recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current = createRecaptchaVerifier("recaptcha-container");
-      }
-      const result = await sendPhoneOTP(`+91${mobileNumber}`, recaptchaVerifierRef.current);
-      setConfirmationResult(result);
-      setOtpStatus("sent");
-      toast({ title: "OTP Sent", description: `Verification code sent to +91${mobileNumber}` });
-    } catch (error: any) {
-      console.error("OTP send error:", error);
-      setOtpStatus("failed");
-      if (recaptchaVerifierRef.current) {
-        try { recaptchaVerifierRef.current.clear(); } catch (_) {}
-        recaptchaVerifierRef.current = null;
-      }
-      toast({ title: "Failed to send OTP", description: error.message, variant: "destructive" });
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (!confirmationResult || otp.length !== 6) return;
-    setOtpStatus("verifying");
-    try {
-      await verifyOTP(confirmationResult, otp);
-      setOtpStatus("verified");
-      toast({ title: "Phone Verified!", description: "Your mobile number has been verified successfully." });
-    } catch (error: any) {
-      console.error("OTP verify error:", error);
-      setOtpStatus("failed");
-      toast({ title: "Verification Failed", description: "Invalid OTP. Please try again.", variant: "destructive" });
-    }
-  };
-
   const handleSubmit = async () => {
     if (!user || !date || !timeSlot || !selectedTable) return;
-    if (otpStatus !== "verified") {
-      toast({ title: "Phone not verified", description: "Please verify your mobile number before submitting.", variant: "destructive" });
+    if (!mobileNumber || mobileNumber.length !== 10) {
+      toast({ title: "Mobile required", description: "Please enter a valid 10-digit mobile number.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -250,7 +200,7 @@ export default function Book() {
             ))}
           </div>
 
-          <div id="recaptcha-container" />
+          
 
           <AnimatePresence mode="wait">
             {step === 0 && (
@@ -436,70 +386,17 @@ export default function Book() {
                             }}
                             maxLength={10}
                             className="bg-muted/50 rounded-l-none"
-                            disabled={otpStatus === "verified"}
+                            disabled={false}
                           />
                         </div>
-                        {otpStatus === "verified" ? (
-                          <Badge className="gap-1 bg-green-600/20 text-green-400 border-green-600/30 h-10 px-3">
-                            <ShieldCheck className="h-4 w-4" />
-                            Verified
+                        {mobileNumber.length === 10 && (
+                          <Badge className="gap-1 bg-emerald/20 text-emerald border-emerald/30 h-10 px-3">
+                            <Check className="h-4 w-4" />
+                            Valid
                           </Badge>
-                        ) : (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="shrink-0"
-                            disabled={mobileNumber.length !== 10 || otpStatus === "sending"}
-                            onClick={handleSendOTP}
-                          >
-                            {otpStatus === "sending" ? (
-                              <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Sending...</>
-                            ) : otpStatus === "sent" || otpStatus === "failed" ? (
-                              "Resend OTP"
-                            ) : (
-                              "Send OTP"
-                            )}
-                          </Button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">We'll send a verification code to confirm your number</p>
-
-                      {(otpStatus === "sent" || otpStatus === "verifying" || otpStatus === "failed") && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          className="space-y-3 pt-2"
-                        >
-                          <Label>Enter OTP</Label>
-                          <div className="flex items-center gap-3">
-                            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                              <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
-                                <InputOTPSlot index={3} />
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
-                              </InputOTPGroup>
-                            </InputOTP>
-                            <Button
-                              type="button"
-                              className="bg-gradient-gold text-primary-foreground font-semibold"
-                              disabled={otp.length !== 6 || otpStatus === "verifying"}
-                              onClick={handleVerifyOTP}
-                            >
-                              {otpStatus === "verifying" ? (
-                                <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Verifying...</>
-                              ) : (
-                                "Verify"
-                              )}
-                            </Button>
-                          </div>
-                          {otpStatus === "failed" && (
-                            <p className="text-xs text-destructive">Verification failed. Please try again.</p>
-                          )}
-                        </motion.div>
-                      )}
+                      <p className="text-xs text-muted-foreground">Enter your 10-digit mobile number</p>
                     </div>
 
                     <div className="space-y-2">
@@ -540,7 +437,7 @@ export default function Book() {
                       <Button
                         className="bg-gradient-gold text-primary-foreground font-semibold gap-2 flex-1 h-12"
                         onClick={handleSubmit}
-                        disabled={submitting || otpStatus !== "verified"}
+                        disabled={submitting || mobileNumber.length !== 10}
                       >
                         {submitting ? "Submitting..." : "Submit Reservation"}
                         <Check className="h-4 w-4" />
