@@ -101,12 +101,6 @@ export default function Book() {
     return () => { supabase.removeChannel(channel); };
   }, [date, timeSlot]);
 
-  useEffect(() => {
-    if (otpStatus !== "idle") {
-      setOtpStatus("idle");
-      setOtp("");
-    }
-  }, [mobileNumber]);
 
   const categories = [...new Set(menuItems.map(i => i.category))];
   const preOrderTotal = Object.entries(preOrder).reduce((sum, [id, qty]) => {
