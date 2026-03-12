@@ -397,67 +397,14 @@ export default function Book() {
                             disabled={otpStatus === "verified"}
                           />
                         </div>
-                        {otpStatus === "verified" ? (
-                          <Badge className="gap-1 bg-green-600/20 text-green-400 border-green-600/30 h-10 px-3">
-                            <ShieldCheck className="h-4 w-4" />
-                            Verified
+                        {mobileNumber.length === 10 && (
+                          <Badge className="gap-1 bg-emerald/20 text-emerald border-emerald/30 h-10 px-3">
+                            <Check className="h-4 w-4" />
+                            Valid
                           </Badge>
-                        ) : (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="shrink-0"
-                            disabled={mobileNumber.length !== 10 || otpStatus === "sending"}
-                            onClick={handleSendOTP}
-                          >
-                            {otpStatus === "sending" ? (
-                              <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Sending...</>
-                            ) : otpStatus === "sent" || otpStatus === "failed" ? (
-                              "Resend OTP"
-                            ) : (
-                              "Send OTP"
-                            )}
-                          </Button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">We'll send a verification code to confirm your number</p>
-
-                      {(otpStatus === "sent" || otpStatus === "verifying" || otpStatus === "failed") && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          className="space-y-3 pt-2"
-                        >
-                          <Label>Enter OTP</Label>
-                          <div className="flex items-center gap-3">
-                            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                              <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
-                                <InputOTPSlot index={3} />
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
-                              </InputOTPGroup>
-                            </InputOTP>
-                            <Button
-                              type="button"
-                              className="bg-gradient-gold text-primary-foreground font-semibold"
-                              disabled={otp.length !== 6 || otpStatus === "verifying"}
-                              onClick={handleVerifyOTP}
-                            >
-                              {otpStatus === "verifying" ? (
-                                <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Verifying...</>
-                              ) : (
-                                "Verify"
-                              )}
-                            </Button>
-                          </div>
-                          {otpStatus === "failed" && (
-                            <p className="text-xs text-destructive">Verification failed. Please try again.</p>
-                          )}
-                        </motion.div>
-                      )}
+                      <p className="text-xs text-muted-foreground">Enter your 10-digit mobile number</p>
                     </div>
 
                     <div className="space-y-2">
