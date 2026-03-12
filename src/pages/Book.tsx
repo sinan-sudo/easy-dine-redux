@@ -437,7 +437,7 @@ export default function Book() {
                       <Button
                         className="bg-gradient-gold text-primary-foreground font-semibold gap-2 flex-1 h-12"
                         onClick={handleSubmit}
-                        disabled={submitting || otpStatus !== "verified"}
+                        disabled={submitting || mobileNumber.length !== 10}
                       >
                         {submitting ? "Submitting..." : "Submit Reservation"}
                         <Check className="h-4 w-4" />
