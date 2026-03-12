@@ -58,8 +58,6 @@ export default function Book() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const [otpStatus, setOtpStatus] = useState<OtpStatus>("idle");
-  const [otp, setOtp] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
