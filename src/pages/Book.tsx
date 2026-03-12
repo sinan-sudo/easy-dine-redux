@@ -60,8 +60,6 @@ export default function Book() {
 
   const [otpStatus, setOtpStatus] = useState<OtpStatus>("idle");
   const [otp, setOtp] = useState("");
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
