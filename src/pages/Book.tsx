@@ -118,8 +118,8 @@ export default function Book() {
 
   const handleSubmit = async () => {
     if (!user || !date || !timeSlot || !selectedTable) return;
-    if (otpStatus !== "verified") {
-      toast({ title: "Phone not verified", description: "Please verify your mobile number before submitting.", variant: "destructive" });
+    if (!mobileNumber || mobileNumber.length !== 10) {
+      toast({ title: "Mobile required", description: "Please enter a valid 10-digit mobile number.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
