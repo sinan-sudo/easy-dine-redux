@@ -20,9 +20,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import FloorMap from "@/components/FloorMap";
 import Navbar from "@/components/Navbar";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { createRecaptchaVerifier } from "@/lib/firebase";
-import { sendPhoneOTP, verifyOTP } from "@/lib/firebaseAuth";
-import { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
 
 type RestaurantTable = Tables<"restaurant_tables">;
 type MenuItem = Tables<"menu_items">;
