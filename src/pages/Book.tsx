@@ -36,7 +36,7 @@ const OCCASIONS = [
   { value: "business" as const, label: "💼 Business" },
 ];
 
-type OtpStatus = "idle" | "sending" | "sent" | "verifying" | "verified" | "failed";
+
 
 export default function Book() {
   const { user, loading: authLoading } = useAuth();
