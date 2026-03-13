@@ -12,7 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Plus, Minus, Check, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { CalendarIcon, Plus, Minus, Check, ArrowRight, ArrowLeft, Loader2, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -57,7 +58,8 @@ export default function Book() {
   const [allergyNotes, setAllergyNotes] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [smsSent, setSmsSent] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -139,9 +141,10 @@ export default function Book() {
     if (error) {
       toast({ title: "Booking failed", description: error.message, variant: "destructive" });
     } else {
+      let smsSuccess = false;
       if (fullMobile) {
         try {
-          await supabase.functions.invoke("send-booking-sms", {
+          const { error: smsError } = await supabase.functions.invoke("send-booking-sms", {
             body: {
               mobile_number: fullMobile,
               reservation_date: format(date, "PPP"),
@@ -151,12 +154,13 @@ export default function Book() {
               occasion,
             },
           });
+          if (!smsError) smsSuccess = true;
         } catch (e) {
           console.error("SMS send failed:", e);
         }
       }
-      toast({ title: "Reservation submitted!", description: "Awaiting confirmation from the restaurant." });
-      navigate("/my-reservations");
+      setSmsSent(smsSuccess);
+      setShowSuccessDialog(true);
     }
     setSubmitting(false);
   };
@@ -449,6 +453,56 @@ export default function Book() {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* Success Dialog */}
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent className="glass-card border-primary/20 sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-xl flex items-center gap-2">
+                <Check className="h-5 w-5 text-emerald-400" />
+                Reservation Submitted!
+              </DialogTitle>
+              <DialogDescription>
+                Your reservation is awaiting confirmation from the restaurant.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Date</p>
+                  <p className="font-semibold">{date ? format(date, "PPP") : ""}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Time</p>
+                  <p className="font-semibold">{timeSlot}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Party Size</p>
+                  <p className="font-semibold">{partySize} guests</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Table</p>
+                  <p className="font-semibold">Table {selectedTable?.table_number}</p>
+                </div>
+              </div>
+              {smsSent && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <MessageSquare className="h-4 w-4 shrink-0" />
+                  <span className="text-sm">Booking details sent to +91{mobileNumber}</span>
+                </div>
+              )}
+            </div>
+            <Button
+              className="bg-gradient-gold text-primary-foreground font-semibold w-full mt-2"
+              onClick={() => {
+                setShowSuccessDialog(false);
+                navigate("/my-reservations");
+              }}
+            >
+              View My Reservations
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
