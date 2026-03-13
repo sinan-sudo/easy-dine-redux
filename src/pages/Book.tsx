@@ -298,7 +298,7 @@ export default function Book() {
                                   <p className="text-xs text-muted-foreground">{item.description}</p>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <span className="text-sm font-semibold text-primary">${item.price.toFixed(2)}</span>
+                                  <span className="text-sm font-semibold text-primary">₹{item.price.toFixed(2)}</span>
                                   <div className="flex items-center gap-1">
                                     {qty > 0 && (
                                       <Button variant="ghost" size="icon" className="h-7 w-7"
@@ -322,7 +322,7 @@ export default function Book() {
                     {preOrderTotal > 0 && (
                       <div className="p-3 rounded-lg bg-primary/10 flex justify-between items-center">
                         <span className="text-sm font-medium">Pre-order Total</span>
-                        <span className="font-heading font-bold text-primary text-lg">${preOrderTotal.toFixed(2)}</span>
+                        <span className="font-heading font-bold text-primary text-lg">₹{preOrderTotal.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex gap-3">
@@ -422,13 +422,13 @@ export default function Book() {
                             return item ? (
                               <div key={id} className="flex justify-between text-sm">
                                 <span>{qty}x {item.name}</span>
-                                <span className="text-primary">${(item.price * qty).toFixed(2)}</span>
+                                <span className="text-primary">₹{(item.price * qty).toFixed(2)}</span>
                               </div>
                             ) : null;
                           })}
                           <div className="flex justify-between font-semibold pt-2 border-t border-border">
                             <span>Total</span>
-                            <span className="text-primary">${preOrderTotal.toFixed(2)}</span>
+                            <span className="text-primary">₹{preOrderTotal.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
