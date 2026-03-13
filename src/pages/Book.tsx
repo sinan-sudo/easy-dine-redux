@@ -428,7 +428,7 @@ export default function Book() {
                           })}
                           <div className="flex justify-between font-semibold pt-2 border-t border-border">
                             <span>Total</span>
-                            <span className="text-primary">${preOrderTotal.toFixed(2)}</span>
+                            <span className="text-primary">₹{preOrderTotal.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
