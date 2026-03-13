@@ -141,9 +141,10 @@ export default function Book() {
     if (error) {
       toast({ title: "Booking failed", description: error.message, variant: "destructive" });
     } else {
+      let smsSuccess = false;
       if (fullMobile) {
         try {
-          await supabase.functions.invoke("send-booking-sms", {
+          const { error: smsError } = await supabase.functions.invoke("send-booking-sms", {
             body: {
               mobile_number: fullMobile,
               reservation_date: format(date, "PPP"),
@@ -153,12 +154,13 @@ export default function Book() {
               occasion,
             },
           });
+          if (!smsError) smsSuccess = true;
         } catch (e) {
           console.error("SMS send failed:", e);
         }
       }
-      toast({ title: "Reservation submitted!", description: "Awaiting confirmation from the restaurant." });
-      navigate("/my-reservations");
+      setSmsSent(smsSuccess);
+      setShowSuccessDialog(true);
     }
     setSubmitting(false);
   };
