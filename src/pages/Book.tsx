@@ -453,6 +453,56 @@ export default function Book() {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* Success Dialog */}
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent className="glass-card border-primary/20 sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-xl flex items-center gap-2">
+                <Check className="h-5 w-5 text-emerald-400" />
+                Reservation Submitted!
+              </DialogTitle>
+              <DialogDescription>
+                Your reservation is awaiting confirmation from the restaurant.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Date</p>
+                  <p className="font-semibold">{date ? format(date, "PPP") : ""}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Time</p>
+                  <p className="font-semibold">{timeSlot}</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Party Size</p>
+                  <p className="font-semibold">{partySize} guests</p>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">Table</p>
+                  <p className="font-semibold">Table {selectedTable?.table_number}</p>
+                </div>
+              </div>
+              {smsSent && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <MessageSquare className="h-4 w-4 shrink-0" />
+                  <span className="text-sm">Booking details sent to +91{mobileNumber}</span>
+                </div>
+              )}
+            </div>
+            <Button
+              className="bg-gradient-gold text-primary-foreground font-semibold w-full mt-2"
+              onClick={() => {
+                setShowSuccessDialog(false);
+                navigate("/my-reservations");
+              }}
+            >
+              View My Reservations
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
