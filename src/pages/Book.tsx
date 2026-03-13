@@ -422,7 +422,7 @@ export default function Book() {
                             return item ? (
                               <div key={id} className="flex justify-between text-sm">
                                 <span>{qty}x {item.name}</span>
-                                <span className="text-primary">${(item.price * qty).toFixed(2)}</span>
+                                <span className="text-primary">₹{(item.price * qty).toFixed(2)}</span>
                               </div>
                             ) : null;
                           })}
