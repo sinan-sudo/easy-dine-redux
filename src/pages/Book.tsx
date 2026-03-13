@@ -322,7 +322,7 @@ export default function Book() {
                     {preOrderTotal > 0 && (
                       <div className="p-3 rounded-lg bg-primary/10 flex justify-between items-center">
                         <span className="text-sm font-medium">Pre-order Total</span>
-                        <span className="font-heading font-bold text-primary text-lg">${preOrderTotal.toFixed(2)}</span>
+                        <span className="font-heading font-bold text-primary text-lg">₹{preOrderTotal.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex gap-3">
