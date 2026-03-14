@@ -21,36 +21,36 @@ serve(async (req) => {
       });
     }
 
-    // Strip +91 prefix for Fast2SMS (expects 10-digit number)
-    const number = mobile_number.replace(/^\+91/, "");
+    // Ensure number has +91 prefix for TextBee
+    const number = mobile_number.startsWith("+") ? mobile_number : `+91${mobile_number.replace(/^\+?91/, "")}`;
 
     const occasionText = occasion && occasion !== "none" ? ` Occasion: ${occasion}.` : "";
     const message = `Your table is booked! Date: ${reservation_date}, Time: ${time_slot}, Table: ${table_number}, Guests: ${party_size}.${occasionText} See you soon! - EasyDine`;
 
-    const apiKey = Deno.env.get("FAST2SMS_API_KEY");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "SMS API key not configured" }), {
+    const apiKey = Deno.env.get("TEXTBEE_API_KEY");
+    const deviceId = Deno.env.get("TEXTBEE_DEVICE_ID");
+
+    if (!apiKey || !deviceId) {
+      return new Response(JSON.stringify({ error: "TextBee API key or Device ID not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+    const smsResponse = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
       method: "POST",
       headers: {
-        authorization: apiKey,
+        "x-api-key": apiKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        route: "q",
+        recipients: [number],
         message,
-        language: "english",
-        numbers: number,
       }),
     });
 
     const smsResult = await smsResponse.json();
-    console.log("Fast2SMS response:", JSON.stringify(smsResult));
+    console.log("TextBee response:", JSON.stringify(smsResult));
 
     return new Response(JSON.stringify({ success: true, sms_result: smsResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
