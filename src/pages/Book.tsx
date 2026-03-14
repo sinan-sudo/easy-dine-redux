@@ -57,8 +57,7 @@ export default function Book() {
   const [allergyNotes, setAllergyNotes] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [smsSent, setSmsSent] = useState(false);
+  
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
