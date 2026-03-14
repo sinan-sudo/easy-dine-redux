@@ -157,8 +157,22 @@ export default function Book() {
           console.error("SMS send failed:", e);
         }
       }
-      setSmsSent(smsSuccess);
-      setShowSuccessDialog(true);
+      toast({
+        title: "Booking confirmed!",
+        description: smsSuccess
+          ? "Booking details sent to your mobile number."
+          : "Your reservation has been submitted.",
+      });
+      // Reset form and go back to step 0
+      setStep(0);
+      setDate(undefined);
+      setTimeSlot("");
+      setPartySize(2);
+      setSelectedTable(null);
+      setPreOrder({});
+      setOccasion("none");
+      setAllergyNotes("");
+      setMobileNumber("");
     }
     setSubmitting(false);
   };
