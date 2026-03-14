@@ -37,6 +37,7 @@ serve(async (req) => {
       });
     }
 
+    // Send SMS to user
     const smsResponse = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
       method: "POST",
       headers: {
@@ -50,9 +51,28 @@ serve(async (req) => {
     });
 
     const smsResult = await smsResponse.json();
-    console.log("TextBee response:", JSON.stringify(smsResult));
+    console.log("TextBee user SMS response:", JSON.stringify(smsResult));
 
-    return new Response(JSON.stringify({ success: true, sms_result: smsResult }), {
+    // Send SMS to admin
+    const adminNumber = "+918590994644";
+    const adminMessage = `A user has booked ${party_size} seat(s). Table: ${table_number}, Date: ${reservation_date}, Time: ${time_slot}.`;
+
+    const adminSmsResponse = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipients: [adminNumber],
+        message: adminMessage,
+      }),
+    });
+
+    const adminSmsResult = await adminSmsResponse.json();
+    console.log("TextBee admin SMS response:", JSON.stringify(adminSmsResult));
+
+    return new Response(JSON.stringify({ success: true, sms_result: smsResult, admin_sms_result: adminSmsResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
