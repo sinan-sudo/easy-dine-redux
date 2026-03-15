@@ -111,8 +111,8 @@ function TableUnit({
             width: tableSize + 50,
             height: tableSize + 50,
           }}
-          onHoverStart={() => isSelectable && setHovered(true)}
-          onHoverEnd={() => setHovered(false)}
+          onMouseEnter={() => isSelectable && setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
           onClick={() => isSelectable && onSelect()}
           whileTap={isSelectable ? { scale: 0.95 } : {}}
         >
