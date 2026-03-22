@@ -139,29 +139,24 @@ export default function Book() {
     if (error) {
       toast({ title: "Booking failed", description: error.message, variant: "destructive" });
     } else {
-      let smsSuccess = false;
-      if (fullMobile) {
-        try {
-          const { error: smsError } = await supabase.functions.invoke("send-booking-sms", {
-            body: {
-              mobile_number: fullMobile,
-              reservation_date: format(date, "PPP"),
-              time_slot: timeSlot,
-              party_size: partySize,
-              table_number: selectedTable.table_number,
-              occasion,
-            },
-          });
-          if (!smsError) smsSuccess = true;
-        } catch (e) {
-          console.error("SMS send failed:", e);
-        }
+      // Notify admin only
+      try {
+        await supabase.functions.invoke("send-booking-sms", {
+          body: {
+            type: "admin-alert",
+            reservation_date: format(date, "PPP"),
+            time_slot: timeSlot,
+            party_size: partySize,
+            table_number: selectedTable.table_number,
+            occasion,
+          },
+        });
+      } catch (e) {
+        console.error("Admin alert SMS failed:", e);
       }
       toast({
-        title: "Booking confirmed!",
-        description: smsSuccess
-          ? "Booking details sent to your mobile number."
-          : "Your reservation has been submitted.",
+        title: "Reservation submitted!",
+        description: "Your booking is pending admin approval. You'll receive an SMS once confirmed.",
       });
       // Reset form and go back to step 0
       setStep(0);

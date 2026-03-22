@@ -63,12 +63,32 @@ export default function Admin() {
   }, []);
 
   const updateStatus = async (id: string, status: "confirmed" | "rejected") => {
+    const reservation = reservations.find(r => r.id === id);
     const { error } = await supabase.from("reservations").update({ status } as any).eq("id", id);
     if (error) {
       toast({ title: "Failed to update", description: error.message, variant: "destructive" });
     } else {
       toast({ title: `Reservation ${status}` });
       fetchReservations();
+
+      // Send confirmation SMS to user when approved
+      if (status === "confirmed" && reservation?.mobile_number) {
+        try {
+          await supabase.functions.invoke("send-booking-sms", {
+            body: {
+              type: "user-confirmation",
+              mobile_number: reservation.mobile_number,
+              reservation_date: format(new Date(reservation.reservation_date), "PPP"),
+              time_slot: reservation.time_slot,
+              party_size: reservation.party_size,
+              table_number: reservation.restaurant_tables?.table_number,
+              occasion: reservation.occasion,
+            },
+          });
+        } catch (e) {
+          console.error("User confirmation SMS failed:", e);
+        }
+      }
     }
   };
 
