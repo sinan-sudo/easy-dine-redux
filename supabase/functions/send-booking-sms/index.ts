@@ -61,7 +61,23 @@ serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ error: "Invalid type. Use 'admin-alert' or 'user-confirmation'" }), {
+    if (type === "user-rejection") {
+      if (!mobile_number) {
+        return new Response(JSON.stringify({ error: "Missing mobile_number" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const number = mobile_number.startsWith("+") ? mobile_number : `+91${mobile_number.replace(/^\+?91/, "")}`;
+      const message = `We're sorry, your reservation for ${reservation_date} at ${time_slot} (Table ${table_number}, ${party_size} guests) could not be confirmed. Please try booking a different time or table. - EasyDine`;
+      const result = await sendSms(number, message);
+      console.log("User rejection SMS:", JSON.stringify(result));
+      return new Response(JSON.stringify({ success: true, sms_result: result }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ error: "Invalid type. Use 'admin-alert', 'user-confirmation', or 'user-rejection'" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
