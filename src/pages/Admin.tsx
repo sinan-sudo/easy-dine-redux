@@ -71,12 +71,12 @@ export default function Admin() {
       toast({ title: `Reservation ${status}` });
       fetchReservations();
 
-      // Send confirmation SMS to user when approved
-      if (status === "confirmed" && reservation?.mobile_number) {
+      // Send SMS to user on approval or rejection
+      if ((status === "confirmed" || status === "rejected") && reservation?.mobile_number) {
         try {
           await supabase.functions.invoke("send-booking-sms", {
             body: {
-              type: "user-confirmation",
+              type: status === "confirmed" ? "user-confirmation" : "user-rejection",
               mobile_number: reservation.mobile_number,
               reservation_date: format(new Date(reservation.reservation_date), "PPP"),
               time_slot: reservation.time_slot,
@@ -86,7 +86,7 @@ export default function Admin() {
             },
           });
         } catch (e) {
-          console.error("User confirmation SMS failed:", e);
+          console.error(`User ${status} SMS failed:`, e);
         }
       }
     }
