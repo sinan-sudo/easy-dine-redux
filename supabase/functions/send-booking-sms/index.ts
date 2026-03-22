@@ -12,20 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { mobile_number, reservation_date, time_slot, party_size, table_number, occasion } = await req.json();
-
-    if (!mobile_number || !reservation_date || !time_slot) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Ensure number has +91 prefix for TextBee
-    const number = mobile_number.startsWith("+") ? mobile_number : `+91${mobile_number.replace(/^\+?91/, "")}`;
-
-    const occasionText = occasion && occasion !== "none" ? ` Occasion: ${occasion}.` : "";
-    const message = `Your table is booked! Date: ${reservation_date}, Time: ${time_slot}, Table: ${table_number}, Guests: ${party_size}.${occasionText} See you soon! - EasyDine`;
+    const { type, mobile_number, reservation_date, time_slot, party_size, table_number, occasion } = await req.json();
 
     const apiKey = Deno.env.get("TEXTBEE_API_KEY");
     const deviceId = Deno.env.get("TEXTBEE_DEVICE_ID");
@@ -37,42 +24,45 @@ serve(async (req) => {
       });
     }
 
-    // Send SMS to user
-    const smsResponse = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipients: [number],
-        message,
-      }),
-    });
+    const sendSms = async (recipient: string, message: string) => {
+      const res = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
+        method: "POST",
+        headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ recipients: [recipient], message }),
+      });
+      return res.json();
+    };
 
-    const smsResult = await smsResponse.json();
-    console.log("TextBee user SMS response:", JSON.stringify(smsResult));
+    if (type === "admin-alert") {
+      // Only notify admin about new booking
+      const adminNumber = "+918590994644";
+      const adminMessage = `New booking request: ${party_size} seat(s), Table: ${table_number}, Date: ${reservation_date}, Time: ${time_slot}. Please review in admin dashboard.`;
+      const result = await sendSms(adminNumber, adminMessage);
+      console.log("Admin alert SMS:", JSON.stringify(result));
+      return new Response(JSON.stringify({ success: true, admin_sms_result: result }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    // Send SMS to admin
-    const adminNumber = "+918590994644";
-    const adminMessage = `A user has booked ${party_size} seat(s). Table: ${table_number}, Date: ${reservation_date}, Time: ${time_slot}.`;
+    if (type === "user-confirmation") {
+      if (!mobile_number) {
+        return new Response(JSON.stringify({ error: "Missing mobile_number" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const number = mobile_number.startsWith("+") ? mobile_number : `+91${mobile_number.replace(/^\+?91/, "")}`;
+      const occasionText = occasion && occasion !== "none" ? ` Occasion: ${occasion}.` : "";
+      const message = `Your reservation is confirmed! Date: ${reservation_date}, Time: ${time_slot}, Table: ${table_number}, Guests: ${party_size}.${occasionText} See you soon! - EasyDine`;
+      const result = await sendSms(number, message);
+      console.log("User confirmation SMS:", JSON.stringify(result));
+      return new Response(JSON.stringify({ success: true, sms_result: result }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    const adminSmsResponse = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipients: [adminNumber],
-        message: adminMessage,
-      }),
-    });
-
-    const adminSmsResult = await adminSmsResponse.json();
-    console.log("TextBee admin SMS response:", JSON.stringify(adminSmsResult));
-
-    return new Response(JSON.stringify({ success: true, sms_result: smsResult, admin_sms_result: adminSmsResult }), {
+    return new Response(JSON.stringify({ error: "Invalid type. Use 'admin-alert' or 'user-confirmation'" }), {
+      status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
