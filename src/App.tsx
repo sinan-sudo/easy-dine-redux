@@ -10,6 +10,7 @@ import Book from "./pages/Book";
 import MyReservations from "./pages/MyReservations";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
+import ChatSupport from "./pages/ChatSupport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
