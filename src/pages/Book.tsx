@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SupportBanner from "@/components/SupportBanner";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -461,7 +462,7 @@ export default function Book() {
           </AnimatePresence>
         </motion.div>
 
-        
+        <SupportBanner />
       </div>
     </div>
   );

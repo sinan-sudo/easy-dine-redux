@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SupportBanner from "@/components/SupportBanner";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, UtensilsCrossed, Star, Clock, Shield } from "lucide-react";
 import { motion } from "framer-motion";
@@ -122,12 +123,15 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="border-t border-border/30 py-8">
-        <div className="container mx-auto px-4 flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <UtensilsCrossed className="h-4 w-4 text-primary" />
-            <span className="font-heading">Easy<span className="text-primary">Dine</span></span>
+        <div className="container mx-auto px-4 flex flex-col items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <UtensilsCrossed className="h-4 w-4 text-primary" />
+              <span className="font-heading">Easy<span className="text-primary">Dine</span></span>
+            </div>
+            <p>© 2026 EasyDine. All rights reserved.</p>
           </div>
-          <p>© 2026 EasyDine. All rights reserved.</p>
+          <SupportBanner />
         </div>
       </footer>
     </div>
