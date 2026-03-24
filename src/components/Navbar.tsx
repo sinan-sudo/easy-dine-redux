@@ -44,6 +44,12 @@ export default function Navbar() {
                   <span className="hidden sm:inline">Profile</span>
                 </Button>
               </Link>
+              <Link to="/chat-support">
+                <Button variant="ghost" size="sm" className="gap-2 text-foreground hover:text-primary">
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">Support</span>
+                </Button>
+              </Link>
               {isAdmin && (
                 <Link to="/admin">
                   <Button variant="ghost" size="sm" className="gap-2 text-foreground hover:text-primary">
