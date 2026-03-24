@@ -209,7 +209,7 @@ export default function ChatSupport() {
           {/* Escalation */}
           <p className="text-center text-xs text-muted-foreground">
             Need more help?{" "}
-            <a href="mailto:support@easydine.com" className="text-primary hover:underline">
+            <a href="mailto:sinukp1405@gmail.com?subject=EasyDine%20Support%20Request" className="text-primary hover:underline">
               Email our support team
             </a>
           </p>
