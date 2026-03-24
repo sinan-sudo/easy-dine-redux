@@ -29,6 +29,7 @@ const App = () => (
             <Route path="/my-reservations" element={<MyReservations />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/chat-support" element={<ChatSupport />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { UtensilsCrossed, LogOut, LayoutDashboard, CalendarDays, User } from "lucide-react";
+import { UtensilsCrossed, LogOut, LayoutDashboard, CalendarDays, User, MessageCircle } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 
 export default function Navbar() {
