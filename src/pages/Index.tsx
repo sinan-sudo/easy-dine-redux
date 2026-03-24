@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SupportBanner from "@/components/SupportBanner";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, UtensilsCrossed, Star, Clock, Shield } from "lucide-react";
 import { motion } from "framer-motion";
