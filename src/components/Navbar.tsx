@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { UtensilsCrossed, LogOut, LayoutDashboard, CalendarDays, User } from "lucide-react";
+import { UtensilsCrossed, LogOut, LayoutDashboard, CalendarDays, User, MessageCircle } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 
 export default function Navbar() {
@@ -42,6 +42,12 @@ export default function Navbar() {
                 <Button variant="ghost" size="sm" className="gap-2 text-foreground hover:text-primary">
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">Profile</span>
+                </Button>
+              </Link>
+              <Link to="/chat-support">
+                <Button variant="ghost" size="sm" className="gap-2 text-foreground hover:text-primary">
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">Support</span>
                 </Button>
               </Link>
               {isAdmin && (

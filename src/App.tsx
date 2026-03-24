@@ -10,6 +10,7 @@ import Book from "./pages/Book";
 import MyReservations from "./pages/MyReservations";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
+import ChatSupport from "./pages/ChatSupport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/my-reservations" element={<MyReservations />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/chat-support" element={<ChatSupport />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
