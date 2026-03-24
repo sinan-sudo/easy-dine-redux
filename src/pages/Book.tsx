@@ -461,7 +461,7 @@ export default function Book() {
           </AnimatePresence>
         </motion.div>
 
-        
+        <SupportBanner />
       </div>
     </div>
   );

@@ -155,6 +155,7 @@ export default function MyReservations() {
             </TabsContent>
           </Tabs>
         </motion.div>
+        <SupportBanner />
       </div>
     </div>
   );

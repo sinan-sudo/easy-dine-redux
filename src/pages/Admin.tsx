@@ -227,6 +227,7 @@ export default function Admin() {
             </TabsContent>
           </Tabs>
         </motion.div>
+        <SupportBanner />
       </div>
     </div>
   );

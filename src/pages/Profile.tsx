@@ -105,6 +105,7 @@ export default function Profile() {
             </Card>
           )}
         </motion.div>
+        <SupportBanner />
       </div>
     </div>
   );
