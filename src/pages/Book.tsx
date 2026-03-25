@@ -40,7 +40,7 @@ const OCCASIONS = [
 
 
 export default function Book() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
