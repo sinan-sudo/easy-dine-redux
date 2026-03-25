@@ -1,35 +1,27 @@
 
 
-## SMS Flow Change: Send User SMS Only on Admin Approval
+## Admin-Specific Changes
 
-### Current behavior
-- User books → SMS sent immediately to both user and admin
-- Admin approves/rejects → no SMS sent
+Three changes scoped to admin users only:
 
-### New behavior
-- User books → SMS sent only to **admin** (new booking alert)
-- Admin approves → SMS sent to **user** (confirmation)
-- Admin rejects → no SMS to user
+### 1. Hide Chat Support link for admins in Navbar
 
-### Changes
+In `src/components/Navbar.tsx`, wrap the Chat Support nav link so it only renders when `!isAdmin`.
 
-**1. Split edge function into two flows**
+### 2. Remove SupportBanner from Admin page
 
-Update `supabase/functions/send-booking-sms/index.ts` to accept a `type` parameter:
-- `type: "admin-alert"` — sends only the admin SMS about a new booking
-- `type: "user-confirmation"` — sends only the user confirmation SMS
+In `src/pages/Admin.tsx`, remove the `<SupportBanner />` component and its import.
 
-**2. Update `src/pages/Book.tsx` (handleSubmit)**
+### 3. Auto-confirm bookings when admin books a seat
 
-Change the SMS invoke call to send `type: "admin-alert"` so only the admin gets notified of the new booking. Update the success toast to say "Your reservation has been submitted for approval" instead of "Booking confirmed".
+In `src/pages/Book.tsx`, detect if the current user is an admin (via `useAuth`). If admin:
+- Insert the reservation with `status: 'confirmed'` instead of default `'pending'`
+- Send an SMS to the user immediately (type `user-confirmation`) instead of `admin-alert`
+- Show a success toast saying "Reservation confirmed!" instead of "pending admin approval"
 
-**3. Update `src/pages/Admin.tsx` (updateStatus)**
+### Files to modify
 
-When admin confirms a reservation, invoke `send-booking-sms` with `type: "user-confirmation"` and the reservation's mobile number/details to notify the user their booking is approved.
-
-### Technical details
-
-- The edge function already receives all needed fields (mobile_number, date, time, table, party_size, occasion)
-- Admin dashboard already has access to reservation data including `mobile_number` and related table info via the joined query
-- No database schema changes needed
+- `src/components/Navbar.tsx` — conditionally hide Chat Support link for admins
+- `src/pages/Admin.tsx` — remove SupportBanner import and usage
+- `src/pages/Book.tsx` — add `isAdmin` from `useAuth`, branch logic in `handleSubmit` for auto-confirm + instant SMS
 
