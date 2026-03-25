@@ -40,7 +40,7 @@ const OCCASIONS = [
 
 
 export default function Book() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -135,30 +135,56 @@ export default function Book() {
       allergy_notes: allergyNotes || null,
       pre_order_items: preOrderItems,
       mobile_number: fullMobile,
+      ...(isAdmin ? { status: "confirmed" as const } : {}),
     } as any);
 
     if (error) {
       toast({ title: "Booking failed", description: error.message, variant: "destructive" });
     } else {
-      // Notify admin only
-      try {
-        await supabase.functions.invoke("send-booking-sms", {
-          body: {
-            type: "admin-alert",
-            reservation_date: format(date, "PPP"),
-            time_slot: timeSlot,
-            party_size: partySize,
-            table_number: selectedTable.table_number,
-            occasion,
-          },
+      if (isAdmin) {
+        // Admin booking: send confirmation SMS to user instantly
+        if (fullMobile) {
+          try {
+            await supabase.functions.invoke("send-booking-sms", {
+              body: {
+                type: "user-confirmation",
+                mobile_number: fullMobile,
+                reservation_date: format(date, "PPP"),
+                time_slot: timeSlot,
+                party_size: partySize,
+                table_number: selectedTable.table_number,
+                occasion,
+              },
+            });
+          } catch (e) {
+            console.error("User confirmation SMS failed:", e);
+          }
+        }
+        toast({
+          title: "Reservation confirmed!",
+          description: "The booking has been confirmed and the guest has been notified via SMS.",
         });
-      } catch (e) {
-        console.error("Admin alert SMS failed:", e);
+      } else {
+        // Regular user: notify admin
+        try {
+          await supabase.functions.invoke("send-booking-sms", {
+            body: {
+              type: "admin-alert",
+              reservation_date: format(date, "PPP"),
+              time_slot: timeSlot,
+              party_size: partySize,
+              table_number: selectedTable.table_number,
+              occasion,
+            },
+          });
+        } catch (e) {
+          console.error("Admin alert SMS failed:", e);
+        }
+        toast({
+          title: "Reservation submitted!",
+          description: "Your booking is pending admin approval. You'll receive an SMS once confirmed.",
+        });
       }
-      toast({
-        title: "Reservation submitted!",
-        description: "Your booking is pending admin approval. You'll receive an SMS once confirmed.",
-      });
       // Reset form and go back to step 0
       setStep(0);
       setDate(undefined);
