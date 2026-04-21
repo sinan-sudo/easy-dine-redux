@@ -74,7 +74,7 @@ export default function Index() {
               </Link>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features */}
