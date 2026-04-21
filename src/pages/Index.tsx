@@ -2,11 +2,18 @@ import { Link } from "react-router-dom";
 import SupportBanner from "@/components/SupportBanner";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, UtensilsCrossed, Star, Clock, Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import heroImage from "@/assets/hero-restaurant.jpg";
+import HeroScene from "@/components/HeroScene";
+import { useRef } from "react";
 
 export default function Index() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const sceneY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+
   const features = [
     { icon: MapPin, title: "Interactive Floor Map", desc: "Choose your exact table from our live restaurant layout" },
     { icon: UtensilsCrossed, title: "Pre-Order Menu", desc: "Browse and pre-order to skip the wait on arrival" },
@@ -19,17 +26,23 @@ export default function Index() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="Fine dining restaurant interior" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
-        </div>
+      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
+        {/* 3D Scene background */}
+        <motion.div
+          style={{ y: sceneY, opacity: sceneOpacity }}
+          className="absolute inset-0 z-0"
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
+          <HeroScene />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/10 to-background pointer-events-none" />
+        </motion.div>
 
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        <motion.div style={{ y: contentY }} className="relative z-10 container mx-auto px-4 text-center pointer-events-none">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="pointer-events-auto"
           >
             <div className="flex items-center justify-center gap-2 mb-6">
               <Star className="h-4 w-4 text-primary fill-primary" />
@@ -61,7 +74,7 @@ export default function Index() {
               </Link>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features */}
