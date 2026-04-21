@@ -9,6 +9,7 @@ import { UtensilsCrossed, Mail, Lock, User, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
