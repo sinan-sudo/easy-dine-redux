@@ -12,6 +12,7 @@ import { format, isBefore, startOfDay } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-warning/20 text-amber-warning border-amber-warning/30",

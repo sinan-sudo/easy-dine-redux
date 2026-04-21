@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 import { User, Phone, AlertTriangle, Save } from "lucide-react";
 
 export default function Profile() {

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Navbar from "@/components/Navbar";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
