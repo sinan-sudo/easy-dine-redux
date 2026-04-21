@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 import { User, Phone, AlertTriangle, Save } from "lucide-react";
 
 export default function Profile() {
@@ -60,9 +61,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dark">
+    <div className="min-h-screen bg-gradient-dark relative">
       <Navbar />
-      <div className="container mx-auto px-4 pt-24 pb-12 max-w-lg">
+      <FloatingFoodDecor />
+      <div className="container mx-auto px-4 pt-24 pb-12 max-w-lg relative z-10">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-heading text-3xl font-bold mb-2">My Profile</h1>
           <p className="text-muted-foreground mb-8">Manage your personal details</p>
