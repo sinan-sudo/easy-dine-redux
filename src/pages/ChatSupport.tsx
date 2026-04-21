@@ -126,9 +126,10 @@ export default function ChatSupport() {
   const showSuggestions = messages.length <= 1;
 
   return (
-    <div className="min-h-screen bg-gradient-dark flex flex-col">
+    <div className="min-h-screen bg-gradient-dark flex flex-col relative">
       <Navbar />
-      <div className="flex-1 flex flex-col items-center pt-20 pb-4 px-4">
+      <FloatingFoodDecor />
+      <div className="flex-1 flex flex-col items-center pt-20 pb-4 px-4 relative z-10">
         <div className="w-full max-w-2xl flex flex-col flex-1 gap-3">
           {/* Header */}
           <div className="flex items-center justify-between">

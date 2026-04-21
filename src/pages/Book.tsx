@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import FloorMap from "@/components/FloorMap";
 import Navbar from "@/components/Navbar";
+import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 
 
 type RestaurantTable = Tables<"restaurant_tables">;

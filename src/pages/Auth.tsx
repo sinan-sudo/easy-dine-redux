@@ -60,12 +60,13 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-dark px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-dark px-4 relative">
+      <FloatingFoodDecor />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
