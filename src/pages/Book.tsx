@@ -204,9 +204,10 @@ export default function Book() {
   const stepTitles = ["Date & Party", "Select Table", "Pre-Order", "Confirm"];
 
   return (
-    <div className="min-h-screen bg-gradient-dark">
+    <div className="min-h-screen bg-gradient-dark relative">
       <Navbar />
-      <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
+      <FloatingFoodDecor />
+      <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl relative z-10">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-heading text-3xl font-bold mb-2">Reserve Your Table</h1>
           <p className="text-muted-foreground mb-8">Book your perfect dining experience</p>

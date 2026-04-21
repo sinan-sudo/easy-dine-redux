@@ -109,3 +109,12 @@
     stroke: hsl(var(--rose));
   }
 }
+
+@keyframes floatDecor {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(4deg);
+  }
+}
