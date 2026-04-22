@@ -24,18 +24,6 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const navEntry = performance.getEntriesByType("navigation")[0] as
-      | PerformanceNavigationTiming
-      | undefined;
-    const isReload = navEntry?.type === "reload";
-    const isDirectLoad = window.history.length <= 1;
-    if (isReload || isDirectLoad) {
-      navigate("/", { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     if (user) navigate("/book");
   }, [user, navigate]);
 
