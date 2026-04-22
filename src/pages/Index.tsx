@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, UtensilsCrossed, Star, Clock, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import HeroScene from "@/components/HeroScene";
 import FloatingFoodDecor from "@/components/FloatingFoodDecor";
+import restaurantHero from "@/assets/restaurant-hero.jpg";
 
 export default function Index() {
   const features = [
@@ -19,58 +19,53 @@ export default function Index() {
     <div className="min-h-screen bg-gradient-dark relative">
       <Navbar />
 
-      {/* Hero — two-column on desktop, stacked on mobile */}
+      {/* Hero — full-bleed restaurant image with centered copy */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden pt-20">
+        <img
+          src={restaurantHero}
+          alt="Warm candlelit restaurant interior with elegant table settings"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Left: copy + CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center md:text-left"
-            >
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-6">
-                <Star className="h-4 w-4 text-primary fill-primary" />
-                <span className="text-sm text-primary tracking-widest uppercase font-medium">Premium Dining Experience</span>
-                <Star className="h-4 w-4 text-primary fill-primary" />
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Star className="h-4 w-4 text-primary fill-primary" />
+              <span className="text-sm text-primary tracking-widest uppercase font-medium">Premium Dining Experience</span>
+              <Star className="h-4 w-4 text-primary fill-primary" />
+            </div>
 
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                Your Table
-                <br />
-                <span className="text-gradient-gold">Awaits</span>
-              </h1>
+            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              Your Table
+              <br />
+              <span className="text-gradient-gold">Awaits</span>
+            </h1>
 
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto md:mx-0 mb-10">
-                Reserve your perfect dining experience. Choose your table, pre-order your favorites, and arrive to perfection.
-              </p>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-10">
+              Reserve your perfect dining experience. Choose your table, pre-order your favorites, and arrive to perfection.
+            </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <Link to="/book">
-                  <Button size="lg" className="bg-gradient-gold text-primary-foreground font-semibold h-14 px-8 text-lg gap-2 glow-gold">
-                    <CalendarDays className="h-5 w-5" />
-                    Reserve Now
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-primary/30 text-foreground hover:bg-primary/10">
-                    Sign In
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Right: interactive 3D scene */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="h-[55vh] md:h-[70vh] w-full"
-            >
-              <HeroScene />
-            </motion.div>
-          </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/book">
+                <Button size="lg" className="bg-gradient-gold text-primary-foreground font-semibold h-14 px-8 text-lg gap-2 glow-gold">
+                  <CalendarDays className="h-5 w-5" />
+                  Reserve Now
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-primary/30 text-foreground hover:bg-primary/10">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
