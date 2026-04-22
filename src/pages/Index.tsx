@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, UtensilsCrossed, Star, Clock, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import HeroScene from "@/components/HeroScene";
 import FloatingFoodDecor from "@/components/FloatingFoodDecor";
+import restaurantHero from "@/assets/restaurant-hero.jpg";
 
 export default function Index() {
   const features = [
