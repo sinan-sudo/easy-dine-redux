@@ -1,41 +1,37 @@
 
 
-## Revert Landing Page Hero to Static Image (No 3D)
+## Redirect Auth Page to Landing on Refresh
 
-Replace the interactive 3D hero scene on the landing page with a static, full-bleed restaurant photo (the uploaded candlelit dining image). Keep the existing heading, tagline, and CTA buttons fully visible on top.
+When the user refreshes the browser while on `/auth` (sign in / sign up page), they should land on `/` (the landing page) instead of staying on `/auth`.
 
-### Changes
+### Approach
 
-1. **Add the uploaded image as a project asset**
-   - Copy `user-uploads://download.jpg` → `src/assets/restaurant-hero.jpg`.
+Add a one-time redirect inside `src/pages/Auth.tsx` that runs on mount. If the user arrived at `/auth` via a fresh browser load (refresh, typed URL, bookmark) rather than via in-app navigation, send them to `/`.
 
-2. **Rewrite hero section in `src/pages/Index.tsx`**
-   - Remove `HeroScene` import and its usage entirely (no 3D on landing page anymore).
-   - Replace the two-column hero layout with a single-column, centered hero that uses the restaurant image as the background:
-     - `<img>` (or div with `bg-[url()]`) absolutely positioned, `object-cover`, full width/height of the hero section.
-     - Dark gradient overlay on top (`bg-gradient-to-b from-background/70 via-background/50 to-background`) so the heading, tagline, and buttons remain legible (WCAG AA contrast).
-   - Restore the original centered hero copy:
-     - "Premium Dining Experience" tagline with star icons
-     - `Your Table Awaits` heading with gold gradient on "Awaits"
-     - Subtitle paragraph
-     - `Reserve Now` + `Sign In` buttons (unchanged styles)
-   - Keep Framer Motion entrance animations on the text block.
+Detection method: use the Performance Navigation API.
 
-3. **Leave the rest of the page intact**
-   - Features grid, CTA card, footer — unchanged.
-   - `FloatingFoodDecor` on non-hero sections — unchanged (still appears on Book/MyReservations/Profile/Auth/ChatSupport per existing rule). User only asked to change the landing hero, so decor on other pages stays.
+```ts
+useEffect(() => {
+  const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+  const isReload = navEntry?.type === "reload";
+  // Also catch first-paint / direct loads where there is no in-app history
+  const isDirectLoad = window.history.length <= 1;
+  if (isReload || isDirectLoad) {
+    navigate("/", { replace: true });
+  }
+}, []);
+```
 
-4. **Keep `HeroScene.tsx` file in repo but unused**
-   - Not deleted (in case the user wants it back), simply no longer imported by `Index.tsx`.
+- `replace: true` so the back button doesn't bounce back to `/auth`.
+- Runs once on mount (empty dep array). Does NOT run on internal navigation from Navbar's "Sign In" link, because in that case `navigation.type === "navigate"` and history length > 1.
+- Existing logic that redirects authenticated users to `/book` stays unchanged and runs after this check (it's a separate effect tied to `user`).
 
 ### Files
 
-- `src/assets/restaurant-hero.jpg` — new (copied from upload)
-- `src/pages/Index.tsx` — rewrite hero section: remove `HeroScene`, add static background image + overlay, restore single-column centered copy
+- `src/pages/Auth.tsx` — add the refresh-detection `useEffect` near the top of the component, before the existing `user` redirect effect.
 
-### Visibility safeguards
+### Notes
 
-- Dark gradient overlay tuned so heading/tagline/buttons remain crisp against the warm candlelit photo.
-- Hero text block constrained to `max-w-3xl` and centered, so it sits clearly over the darker upper portion of the image.
-- No `pointer-events` traps — buttons are fully clickable.
+- No router-level change needed; scoping to `Auth.tsx` keeps the rule local and doesn't affect other deep-linkable pages (Book, Profile, MyReservations, Admin) which should still allow refresh.
+- No changes to `App.tsx`, Navbar, or backend.
 
