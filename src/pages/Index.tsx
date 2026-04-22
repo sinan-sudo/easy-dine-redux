@@ -6,8 +6,10 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import FloatingFoodDecor from "@/components/FloatingFoodDecor";
 import restaurantHero from "@/assets/restaurant-hero.jpg";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
+  const { user } = useAuth();
   const features = [
     { icon: MapPin, title: "Interactive Floor Map", desc: "Choose your exact table from our live restaurant layout" },
     { icon: UtensilsCrossed, title: "Pre-Order Menu", desc: "Browse and pre-order to skip the wait on arrival" },
