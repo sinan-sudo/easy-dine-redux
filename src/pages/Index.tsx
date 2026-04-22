@@ -54,18 +54,27 @@ export default function Index() {
               Reserve your perfect dining experience. Choose your table, pre-order your favorites, and arrive to perfection.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/book">
+            <div className="relative z-20 flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to={user ? "/book" : "/auth"}>
                 <Button size="lg" className="bg-gradient-gold text-primary-foreground font-semibold h-14 px-8 text-lg gap-2 glow-gold">
                   <CalendarDays className="h-5 w-5" />
                   Reserve Now
                 </Button>
               </Link>
-              <Link to="/auth">
-                <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-primary/30 text-foreground hover:bg-primary/10">
-                  Sign In
-                </Button>
-              </Link>
+              {!user && (
+                <>
+                  <Link to="/auth">
+                    <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-primary/30 text-foreground hover:bg-primary/10">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/auth?mode=register">
+                    <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-primary/30 text-foreground hover:bg-primary/10">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
